@@ -10,7 +10,7 @@ router.get("/getPdf/:token", (req, res, next) => {
   }
   let email;
   try {
-    const decoded = jwt.verify(token, "secretKey");
+    const decoded = jwt.verify(token, process.env.SECRETKEY);
     email = decoded.data.email;
   } catch (err) {
     // console.log(err);

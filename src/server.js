@@ -1,8 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const URL =
-  "mongodb+srv://Pragya2805:_CXfhc3P54z@cluster0.ozog75w.mongodb.net/?retryWrites=true&w=majority";
 const app = express();
 const PORT = 3000;
 const path = require("path");
@@ -10,10 +8,10 @@ const User = require("./models/user.model");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const pdfRouter = require("./routes/pdf");
-
+require("dotenv").config();
 const InitiateMongoServer = async () => {
   try {
-    await mongoose.connect(URL, {
+    await mongoose.connect(process.env.MONGOURL, {
       useNewUrlParser: true,
     });
     console.log("Successfully connected to MONGODB !!");
@@ -79,7 +77,7 @@ app.post("/login", async (req, res) => {
           email,
         },
       },
-      "secretKey"
+      process.env.SECRETKEY
     );
     let url = `/pdf/getPdf/${token}`;
 
