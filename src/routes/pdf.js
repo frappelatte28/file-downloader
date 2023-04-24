@@ -3,19 +3,9 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
-router.get("/getPdf/:token", (req, res, next) => {
-  let token = req.params?.token;
-  if (!token) {
-    res.status(500).send("Token not found");
-  }
-  let email;
-  try {
-    const decoded = jwt.verify(token, process.env.SECRETKEY);
-    email = decoded.data.email;
-  } catch (err) {
-    // console.log(err);
-    res.status(500).send("Invalid token");
-  }
+router.get("/getPdf", (req, res, next) => {
+  res.setHeader("Content-Type", "application/pdf");
+  let email = req.decoded.data.email;
   const doc = new PDFDocument();
   doc.pipe(res);
   doc.fontSize(27).text("This is pdf for user " + email, 100, 100);

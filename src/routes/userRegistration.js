@@ -9,8 +9,10 @@ router.post("/", async (req, res, next) => {
     let email = req?.body?.email;
     let password = req?.body?.password;
 
-    if (!email) {
-      user = await User.findOne({ email: email });
+    user = await User.findOne({ email: email });
+
+    if (user) {
+      return res.status(409).send("User Already Exist, Please login");
     }
 
     if (!user) {
@@ -22,7 +24,18 @@ router.post("/", async (req, res, next) => {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
 
+      const token = await jwt.sign(
+        {
+          exp: Math.floor(Date.now() / 1000) + 60 * 60,
+          data: {
+            email,
+          },
+        },
+        process.env.SECRETKEY
+      );
+
       await user.save();
+      user.token = token;
       res
         .status(201)
         .send(

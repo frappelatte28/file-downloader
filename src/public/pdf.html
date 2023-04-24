@@ -1,0 +1,24 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function getPdf() {
+        fetch("https://localhost:3000/pdf/getPdf", {
+          method: "GET",
+          headers: {
+            "auth-token": "",
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => console.log(response))
+          .catch((err) => console.error(err));
+      }
+    </script>
+    <body>
+      <button onClick="getPdf()">Click me!</button>
+    </body>
+  </head>
+</html>

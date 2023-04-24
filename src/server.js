@@ -1,13 +1,13 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const app = express();
-const PORT = 3000;
+const mongoose = require("mongoose");
 const path = require("path");
 const bodyParser = require("body-parser");
 const pdfRouter = require("./routes/pdf");
 const userRegistration = require("./routes/userRegistration");
 const login = require("./routes/login");
-
+const auth = require("./middlewares/auth");
+const PORT = 3000;
 require("dotenv").config();
 
 const InitiateMongoServer = async () => {
@@ -23,10 +23,9 @@ const InitiateMongoServer = async () => {
 };
 
 InitiateMongoServer();
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./public")));
-app.use("/pdf", pdfRouter);
+app.use("/pdf", auth, pdfRouter);
 app.use("/register", userRegistration);
 app.use("/login", login);
 

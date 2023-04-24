@@ -20,7 +20,6 @@ router.post("/", async (req, res) => {
       },
       process.env.SECRETKEY
     );
-    let url = `/pdf/getPdf/${token}`;
 
     if (user) {
       let storedPass = user.password;
@@ -28,7 +27,45 @@ router.post("/", async (req, res) => {
 
       if (passwordMatch) {
         res.send(
-          `<div align ='center'><h2>Login successful</h2></div><br><br><br><div align ='center'><a href=${url}>Get your pdf from here!</a></div><br><br><div align='center'><a href='./login.html'>logout</a></div>`
+          `<html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Document</title>
+            <script>
+            function download(blob, filename) {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.href = url;
+              // the filename you want
+              a.download = filename;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            }
+            function getPdf() {
+              fetch("http://localhost:3000/pdf/getPdf", {
+                method: "GET",
+                headers: {
+                  "authtoken": "${token}",
+                },
+              })
+                .then((response) => response.blob())
+                .then((response) => download(response, "pdf.pdf"))
+                .catch((err) => console.error(err));
+            }
+            </script>
+          </head>
+            <body>
+              <div align ='center'><h2>Login successful</h2></div>
+              <button align ='center' onClick="getPdf()">Click me!</button>
+              <br /><br />
+              <a href='./login.html'>logout</a>
+            </body>
+        </html>`
         );
       } else {
         res.send(
@@ -45,5 +82,4 @@ router.post("/", async (req, res) => {
     res.send("Internal server error");
   }
 });
-
 module.exports = router;
